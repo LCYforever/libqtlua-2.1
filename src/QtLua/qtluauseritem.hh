@@ -82,7 +82,9 @@ public:
   ~UserItem();
 
   /** The as @ref insert. */
+#ifdef __GNUC__
   __attribute__((deprecated))
+#endif
   void move(const Ref<UserListItem> &parent);
 
   /** Insert this item in parent container, remove from existing parent if any. */

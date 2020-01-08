@@ -951,7 +951,11 @@ void State::gc_collect()
 #ifdef HAVE_LUA_GC
   lua_gc(_lst, LUA_GCCOLLECT, 0);
 #else
-  lua_setgcthreshold(_lst, 0);
+	#if LUA_VERSION_NUM >= 501
+		lua_gc(_lst, LUA_GCCOLLECT, 0);
+	#else
+		lua_setgcthreshold(L,0);
+	#endif
 #endif
 }
 
