@@ -75,7 +75,7 @@ namespace QtLua {
    * @see ItemViewDialog
    */
 
-  class TableGridModel : public QAbstractItemModel
+  class QTLUA_API TableGridModel : public QAbstractItemModel
   {
     Q_OBJECT;
     Q_ENUMS(Attribute);

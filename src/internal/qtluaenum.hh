@@ -39,7 +39,7 @@ namespace QtLua {
  * access to enums of @ref QObject objects from lua.
  */
 
-  class Enum : public Member
+  class QTLUA_API Enum : public Member
   {
   public:
     QTLUA_REFTYPE(Enum);

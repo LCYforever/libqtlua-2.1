@@ -38,7 +38,7 @@ namespace QtLua {
  * This internal class implements the wrapper which enables invocation
  * of methods of @ref QObject objects from lua.
  */
-  class Method : public Member
+  class QTLUA_API Method : public Member
   {
   public:
     QTLUA_REFTYPE(Method);

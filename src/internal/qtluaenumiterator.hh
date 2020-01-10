@@ -41,7 +41,7 @@ namespace QtLua {
  * @see Enum
  */
 
-class EnumIterator : public Iterator
+class QTLUA_API EnumIterator : public Iterator
 {
 public:
   QTLUA_REFTYPE(EnumIterator);

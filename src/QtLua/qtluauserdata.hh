@@ -64,7 +64,7 @@ class Iterator;
  * @example examples/cpp/userdata/ref.cc:3|5
  */
 
-class UserData : public QtLua::Refobj<UserData>
+class QTLUA_API UserData : public QtLua::Refobj<UserData>
 {
   friend class State;
   friend class ValueBase;

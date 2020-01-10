@@ -25,7 +25,7 @@
 
 #include <QtLua/qtluaiterator.hh>
 #include <QtLua/Ref>
-
+#include <internal/qtluaqobjectwrapper.hh>
 #include <internal/MetaCache>
 
 namespace QtLua {
@@ -46,7 +46,7 @@ namespace QtLua {
  * @see Iterator
  */
 
-class QObjectIterator : public Iterator
+class QTLUA_API QObjectIterator : public Iterator
 {
 public:
   QTLUA_REFTYPE(QObjectIterator);

@@ -48,7 +48,7 @@ class UserItemModel;
    * See @ref UserItemModel for example.
    */
 
-class UserListItem : public UserItem
+class QTLUA_API UserListItem : public UserItem
 {
   friend class UserItem;
   friend class UserItemModel;

@@ -56,7 +56,7 @@ class Value;
    * @image qtlua_itemmodel.png
    */
 
-class UserItemModel : public QAbstractItemModel
+class QTLUA_API UserItemModel : public QAbstractItemModel
 {
   friend class UserItem;
   friend class UserListItem;

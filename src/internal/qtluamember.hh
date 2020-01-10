@@ -42,7 +42,7 @@ namespace QtLua {
  * This is the base class for @ref Method, @ref Property and @ref Enum
  * wrapper classes.
  */
-  class Member : public UserData
+  class QTLUA_API Member : public UserData
   {
   public:
     QTLUA_REFTYPE(Member);

@@ -41,7 +41,7 @@ namespace QtLua {
    * @ref Value::iterator classes to allow modification of lua tables with
    * the C++ square bracket operator functions.
    */
-  class ValueRef : public ValueBase
+  class QTLUA_API ValueRef : public ValueBase
   {
     friend class Value;
     friend class State;

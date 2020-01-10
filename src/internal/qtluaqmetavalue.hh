@@ -36,7 +36,7 @@ namespace QtLua {
  * @module {Base}
  * @internal
  */
-  class QMetaValue
+  class QTLUA_API QMetaValue
   {
     int _type;
     void *_data;

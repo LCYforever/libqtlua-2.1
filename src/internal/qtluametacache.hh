@@ -47,7 +47,7 @@ namespace QtLua {
  * created @ref Member based wrappers.
  */
 
-  class MetaCache
+  class QTLUA_API MetaCache
   {
     friend class QObjectWrapper;
 

@@ -137,7 +137,7 @@ function remove_cols(check, parent_id, pos, count)
      @end section
   */
 
-  class LuaModel : public QAbstractItemModel
+  class QTLUA_API LuaModel : public QAbstractItemModel
   {
     Q_OBJECT;
     Q_ENUMS(ItemDataRole);

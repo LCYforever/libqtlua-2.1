@@ -50,7 +50,7 @@ namespace QtLua {
    * @example examples/cpp/proxy/dispatchproxy_string.cc:1|2
    */
 
-class DispatchProxy : public UserData
+class QTLUA_API DispatchProxy : public UserData
 {
 
 public:

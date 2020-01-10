@@ -65,7 +65,7 @@ class UserListItem;
    * See @ref UserItemModel for example.
    */
 
-class UserItem : public UserData
+class QTLUA_API UserItem : public UserData
 {
   friend class UserItemModel;
   friend class UserListItem;
@@ -145,7 +145,7 @@ protected:
   inline int get_row() const;
 
 private:
-  const UserItem &operator=(const UserItem &);
+  //const UserItem &operator=(const UserItem &);
 
   virtual void set_model(UserItemModel* model);
   bool in_parent_path(UserItem *item);

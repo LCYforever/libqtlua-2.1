@@ -41,7 +41,7 @@ namespace QtLua {
  * @xref{QObject wrapping} section.
  */
 
-  class QObjectWrapper : public UserData, public QObject
+  class QTLUA_API QObjectWrapper : public UserData, public QObject
   {
     friend class QObjectIterator;
 

@@ -52,7 +52,7 @@ class Iterator;
    * Value and @ref ValueRef class.
    */
 
-class ValueBase
+class QTLUA_API ValueBase
 {
   friend class State;
   friend class UserData;

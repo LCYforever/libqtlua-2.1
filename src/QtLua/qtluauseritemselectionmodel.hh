@@ -39,7 +39,7 @@ namespace QtLua {
    * parents at the same time.
    */
 
-  class UserItemSelectionModel : public QItemSelectionModel
+  class QTLUA_API UserItemSelectionModel : public QItemSelectionModel
   {
     Q_OBJECT;
 

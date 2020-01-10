@@ -62,7 +62,7 @@ namespace QtLua {
    * Functions can also be registered on a @ref Plugin objects.
    */
 
-  class Function : public UserData
+  class QTLUA_API Function : public UserData
   {
   public:
     QTLUA_REFTYPE(Function);

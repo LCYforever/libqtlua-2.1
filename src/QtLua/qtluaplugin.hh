@@ -90,7 +90,7 @@ namespace QtLua {
    * @end section
    */
 
-  class Plugin : public QHashProxyRo<plugin_map_t>
+  class QTLUA_API Plugin : public QHashProxyRo<plugin_map_t>
   {
     friend class Function;
   public:

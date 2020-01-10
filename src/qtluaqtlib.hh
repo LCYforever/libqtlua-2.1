@@ -23,15 +23,16 @@
 
 #include <QObject>
 #include <QSizePolicy>
+#include <qtluaconfig.hh>
 
 namespace QtLua {
 
   class State;
 
-  void qtluaopen_qt(State *ls);
+  QTLUA_API void qtluaopen_qt(State *ls);
 
   /** Fake QSizePolicy class needed to expose Policy enum */
-  class SizePolicy
+  class QTLUA_API SizePolicy
     : public QObject
   {
     Q_OBJECT;

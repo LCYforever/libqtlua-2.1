@@ -38,7 +38,7 @@ namespace QtLua {
  * This internal class implements the wrapper which enables read/write
  * access to properties of @ref QObject objects from lua.
  */
-  class Property : public Member
+  class QTLUA_API Property : public Member
   {
   public:
     QTLUA_REFTYPE(Property);

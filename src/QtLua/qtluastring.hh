@@ -23,6 +23,7 @@
 
 #include <QString>
 #include <QByteArray>
+#include <qtluaconfig.hh>
 
 namespace QtLua {
 
@@ -43,7 +44,7 @@ namespace QtLua {
    * This class is also used as exceptions type for exceptions
    * associated with lua errors.
    */
-  class String : public QByteArray
+  class QTLUA_API String : public QByteArray
   {
   public:
     /** Create an empty string */

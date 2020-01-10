@@ -64,7 +64,7 @@ namespace QtLua {
    * @see ItemViewDialog
    */
 
-  class TableTreeModel : public QAbstractItemModel
+  class QTLUA_API TableTreeModel : public QAbstractItemModel
   {
     Q_OBJECT;
     Q_ENUMS(Attribute);

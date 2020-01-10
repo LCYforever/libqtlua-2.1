@@ -49,7 +49,7 @@ namespace QtLua {
    * @see TableTreeModel @see TableGridModel
    */
 
-  class ItemViewDialog : public QDialog
+  class QTLUA_API ItemViewDialog : public QDialog
   {
     Q_OBJECT;
     Q_PROPERTY(bool resize_on_expand READ get_resize_on_expand WRITE set_resize_on_expand);

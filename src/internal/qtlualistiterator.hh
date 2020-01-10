@@ -40,7 +40,7 @@ namespace QtLua {
  * @see Iterator
  */
 
-class ListIterator : public Iterator
+class QTLUA_API ListIterator : public Iterator
 {
 public:
   QTLUA_REFTYPE(ListIterator);

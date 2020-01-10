@@ -39,7 +39,7 @@ namespace QtLua {
  * @see Iterator
  */
 
-class TableIterator : public Iterator
+class QTLUA_API TableIterator : public Iterator
 {
 public:
   QTLUA_REFTYPE(TableIterator);

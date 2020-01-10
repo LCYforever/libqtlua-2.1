@@ -13,7 +13,8 @@ QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluatablegridmodel.hh OPTIONS -fQtLua/TableGrid
 QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluastate.hh          OPTIONS -fQtLua/State)
 QT5_WRAP_CPP(MOC_OUTFILES qtluaqtlib.hh)
 
-ADD_LIBRARY(qtlua STATIC
+ADD_LIBRARY(qtlua SHARED
+			qtluaconfig.hh
             qtluaconsole.cc qtluaenum.cc
             qtluaenumiterator.cc qtluafunction.cc
             qtluauseritem.cc qtluauseritemmodel.cc

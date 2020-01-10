@@ -91,7 +91,7 @@ namespace QtLua {
    * messages reporting on user console.
    */
 
-class State : public QObject
+class QTLUA_API State : public QObject
 {
   Q_OBJECT
 

@@ -39,7 +39,7 @@ namespace QtLua {
    * integer index.
    */
 
-  class TableTreeKeys
+  class QTLUA_API TableTreeKeys
   {
     friend class TableTreeModel;
 

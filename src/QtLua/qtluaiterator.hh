@@ -61,7 +61,7 @@ namespace QtLua {
    * @example examples/cpp/value/iterate.cc:3
    */
 
-class Iterator : public UserData
+class QTLUA_API Iterator : public UserData
 {
 public:
 

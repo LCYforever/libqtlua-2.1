@@ -49,7 +49,7 @@ namespace QtLua {
  * @see QObjectWrapper
  */
 
-  class QMetaObjectWrapper : public UserData
+  class QTLUA_API QMetaObjectWrapper : public UserData
   {
   public:
     QTLUA_REFTYPE(QMetaObjectWrapper);

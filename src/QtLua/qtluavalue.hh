@@ -43,7 +43,7 @@ namespace QtLua {
    * @see const_iterator
    */
 
-class Value : public ValueBase
+class QTLUA_API Value : public ValueBase
 {
   friend class State;
   friend class UserData;

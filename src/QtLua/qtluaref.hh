@@ -30,6 +30,8 @@
 #include <stdint.h>
 #include <cassert>
 
+#include "qtluaconfig.hh"
+
 namespace QtLua {
 
   template <class X>
@@ -357,7 +359,7 @@ namespace QtLua {
    * @module {Base}
    * @internal
    */
-  class RefobjBase
+  class QTLUA_API RefobjBase
   {
     template <class, class> friend class Ref;
     template <class> friend class RefObj;
