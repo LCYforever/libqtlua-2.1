@@ -43,7 +43,7 @@ namespace QtLua {
   static inline QObject * create_qobject();
 
   /** @internal */
-  void qtlib_register_meta(const QMetaObject *mo, qobject_creator *creator);
+  QTLUA_API void qtlib_register_meta(const QMetaObject *mo, qobject_creator *creator);
 
   class UserData;
   class QObjectWrapper;

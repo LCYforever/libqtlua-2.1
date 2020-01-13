@@ -23,6 +23,8 @@
 
 #include <QObject>
 #include <QSizePolicy>
+#include <internal/QMetaObjectWrapper>
+#include <QtLua/QHashProxy>
 #include <qtluaconfig.hh>
 
 namespace QtLua {
@@ -49,6 +51,30 @@ namespace QtLua {
 	MinimumExpanding = ::QSizePolicy::MinimumExpanding,
 	Ignored = ::QSizePolicy::Ignored,
       };
+  };
+
+  typedef QMap<String, QMetaObjectWrapper > qmetaobject_table_t;
+
+  class QTLUA_API QMetaObjectTable
+    : public QHashProxyRo<qmetaobject_table_t>
+    , public QObject
+  {
+  public:
+    QMetaObjectTable()
+      : QHashProxyRo<qmetaobject_table_t>(_mo_table)
+    {
+      for (const meta_object_table_s *me = meta_object_table; me->_mo; me++)
+	{
+	  String name(me->_mo->className());
+	  name.replace(':', '_');
+	  _mo_table.insert(name, QMetaObjectWrapper(me->_mo, me->_creator));
+	}
+
+      _mo_table.insert("Qt", QMetaObjectWrapper(&staticQtMetaObject));
+      _mo_table.insert("QSizePolicy", QMetaObjectWrapper(&QtLua::SizePolicy::staticMetaObject));
+    }
+
+    qmetaobject_table_t _mo_table;
   };
 
 }
