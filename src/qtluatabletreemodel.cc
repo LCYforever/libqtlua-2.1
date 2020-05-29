@@ -223,7 +223,7 @@ namespace QtLua {
 
     TableTreeKeys *t = static_cast<TableTreeKeys*>(index.internalPointer());
 
-    Qt::ItemFlags res = (Qt::ItemFlag)(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    Qt::ItemFlags res = (Qt::ItemFlags)(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
     if (t->_attr & Editable)
       {

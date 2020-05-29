@@ -1,20 +1,20 @@
 /*
-    This file is part of LibQtLua.
+	This file is part of LibQtLua.
 
-    LibQtLua is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	LibQtLua is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    LibQtLua is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	LibQtLua is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with LibQtLua.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with LibQtLua.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright (C) 2008, Alexandre Becoulet <alexandre.becoulet@free.fr>
+	Copyright (C) 2008, Alexandre Becoulet <alexandre.becoulet@free.fr>
 
 */
 
@@ -127,121 +127,123 @@
 #include <QCommandLinkButton>
 #include <QPlainTextEdit>
 #include <QStyledItemDelegate>
+#include <QWindow>
 #endif
 
 namespace QtLua {
 
-const meta_object_table_s meta_object_table[] = {
-  { &QtLua::Console::staticMetaObject,               &create_qobject<QtLua::Console> },
-  { &QtLua::UserItemSelectionModel::staticMetaObject,    0 },
-  { &QtLua::UserItemModel::staticMetaObject,	     0 },
-  { &QtLua::ItemViewDialog::staticMetaObject,	     0 },
-  { &QtLua::TableTreeModel::staticMetaObject,	     0 },
-  { &QtLua::TableGridModel::staticMetaObject,	     0 },
-  { &QtLua::LuaModel::staticMetaObject,	     0 },
+	const meta_object_table_s meta_object_table[] = {
+	  { "QtLua", &QtLua::Console::staticMetaObject,               &create_qobject<QtLua::Console> },
+	  { "QtLua", &QtLua::UserItemSelectionModel::staticMetaObject,    0 },
+	  { "QtLua", &QtLua::UserItemModel::staticMetaObject,	     0 },
+	  { "QtLua", &QtLua::ItemViewDialog::staticMetaObject,	     0 },
+	  { "QtLua", &QtLua::TableTreeModel::staticMetaObject,	     0 },
+	  { "QtLua", &QtLua::TableGridModel::staticMetaObject,	     0 },
+	  { "QtLua", &QtLua::LuaModel::staticMetaObject,	     0 },
 
-  { &QAbstractItemDelegate::staticMetaObject,	     0 },
-  { &QAbstractItemModel::staticMetaObject,	     0 },
-  { &QAbstractItemView::staticMetaObject,	     0 },
-  { &QAction::staticMetaObject,			     0 },
-  { &QApplication::staticMetaObject,		     0 },
-  { &QButtonGroup::staticMetaObject,		     &create_qobject<QButtonGroup> },
-  { &QCalendarWidget::staticMetaObject,		     &create_qobject<QCalendarWidget> },
-  { &QCheckBox::staticMetaObject,		     &create_qobject<QCheckBox> },
-  { &QClipboard::staticMetaObject,		     0 },
-  { &QColorDialog::staticMetaObject,		     &create_qobject<QColorDialog> },
-  { &QColumnView::staticMetaObject,		     &create_qobject<QColumnView> },
-  { &QComboBox::staticMetaObject,		     &create_qobject<QComboBox> },
-  { &QCoreApplication::staticMetaObject,	     0 },
-  { &QDateEdit::staticMetaObject,		     &create_qobject<QDateEdit> },
-  { &QDateTimeEdit::staticMetaObject,		     &create_qobject<QDateTimeEdit> },
-  { &QDesktopWidget::staticMetaObject,		     &create_qobject<QDesktopWidget> },
-  { &QDial::staticMetaObject,			     &create_qobject<QDial> },
-  { &QDialog::staticMetaObject,			     &create_qobject<QDialog> },
-  { &QDialogButtonBox::staticMetaObject,	     &create_qobject<QDialogButtonBox> },
-  { &QDockWidget::staticMetaObject,		     &create_qobject<QDockWidget> },
-  { &QDoubleSpinBox::staticMetaObject,		     &create_qobject<QDoubleSpinBox> },
-  { &QErrorMessage::staticMetaObject,		     &create_qobject<QErrorMessage> },
-  { &QFile::staticMetaObject,			     &create_qobject<QFile> },
-  // { &QFileDialog::staticMetaObject,		     &create_qobject<QFileDialog> },
-  { &QFocusFrame::staticMetaObject,		     &create_qobject<QFocusFrame> },
-  { &QFont::staticMetaObject,			     0 },
-  { &QFontDialog::staticMetaObject,		     &create_qobject<QFontDialog> },
-  { &QFrame::staticMetaObject,			     &create_qobject<QFrame> },
-  { &QGraphicsScene::staticMetaObject,		     &create_qobject<QGraphicsScene> },
-  { &QGraphicsView::staticMetaObject,		     &create_qobject<QGraphicsView> },
-  { &QGridLayout::staticMetaObject,		     &create_qobject<QGridLayout> },
-  { &QGroupBox::staticMetaObject,		     &create_qobject<QGroupBox> },
-  { &QHBoxLayout::staticMetaObject,		     &create_qobject<QHBoxLayout> },
-  { &QHeaderView::staticMetaObject,		     0 },
-  { &QInputDialog::staticMetaObject,		     &create_qobject<QInputDialog> },
-  { &QItemDelegate::staticMetaObject,		     &create_qobject<QItemDelegate> },
-  { &QLCDNumber::staticMetaObject,		     &create_qobject<QLCDNumber> },
-  { &QLabel::staticMetaObject,			     &create_qobject<QLabel> },
-  { &QLayout::staticMetaObject,			     0 },
-  { &QLibrary::staticMetaObject,		     &create_qobject<QLibrary> },
-  { &QLineEdit::staticMetaObject,		     &create_qobject<QLineEdit> },
-  { &QListView::staticMetaObject,		     &create_qobject<QListView> },
-  { &QListWidget::staticMetaObject,		     &create_qobject<QListWidget> },
-  { &QLocale::staticMetaObject,			     0 },
-  { &QMainWindow::staticMetaObject,		     &create_qobject<QMainWindow> },
-  { &QMdiArea::staticMetaObject,		     &create_qobject<QMdiArea> },
-  { &QMdiSubWindow::staticMetaObject,		     &create_qobject<QMdiSubWindow> },
-  { &QMenu::staticMetaObject,			     &create_qobject<QMenu> },
-  { &QMenuBar::staticMetaObject,		     &create_qobject<QMenuBar> },
-  { &QMessageBox::staticMetaObject,		     &create_qobject<QMessageBox> },
-  { &QObject::staticMetaObject,			     &create_qobject<QObject> },
-  { &QPainter::staticMetaObject,		     0 },
-  { &QPalette::staticMetaObject,		     0 },
-  { &QPluginLoader::staticMetaObject,		     &create_qobject<QPluginLoader> },
-  { &QProcess::staticMetaObject,		     &create_qobject<QProcess> },
-  { &QProgressBar::staticMetaObject,		     &create_qobject<QProgressBar> },
-  { &QProgressDialog::staticMetaObject,		     &create_qobject<QProgressDialog> },
-  { &QPushButton::staticMetaObject,		     &create_qobject<QPushButton> },
-  { &QRadioButton::staticMetaObject,		     &create_qobject<QRadioButton> },
-  { &QRubberBand::staticMetaObject,		     0 },
-  { &QScrollArea::staticMetaObject,		     &create_qobject<QScrollArea> },
-  { &QSettings::staticMetaObject,		     &create_qobject<QSettings> },
-  { &QShortcut::staticMetaObject,		     0 },
-  { &QSignalMapper::staticMetaObject,		     &create_qobject<QSignalMapper> },
-  { &QSlider::staticMetaObject,			     &create_qobject<QSlider> },
-  { &QSpinBox::staticMetaObject,		     &create_qobject<QSpinBox> },
-  { &QSplashScreen::staticMetaObject,		     &create_qobject<QSplashScreen> },
-  { &QSplitter::staticMetaObject,		     &create_qobject<QSplitter> },
-  { &QStackedLayout::staticMetaObject,		     &create_qobject<QStackedLayout> },
-  { &QStackedWidget::staticMetaObject,		     &create_qobject<QStackedWidget> },
-  { &QStatusBar::staticMetaObject,		     &create_qobject<QStatusBar> },
-  { &QStringListModel::staticMetaObject,	     &create_qobject<QStringListModel> },
-  { &QTabBar::staticMetaObject,			     &create_qobject<QTabBar> },
-  { &QTabWidget::staticMetaObject,		     &create_qobject<QTabWidget> },
-  { &QTableView::staticMetaObject,		     &create_qobject<QTableView> },
-  { &QTableWidget::staticMetaObject,		     &create_qobject<QTableWidget> },
-  { &QTemporaryFile::staticMetaObject,		     &create_qobject<QTemporaryFile> },
-  { &QTextDocument::staticMetaObject,		     &create_qobject<QTextDocument> },
-  { &QTextEdit::staticMetaObject,		     &create_qobject<QTextEdit> },
-  { &QThread::staticMetaObject,			     &create_qobject<QThread> },
-  { &QTimeEdit::staticMetaObject,		     &create_qobject<QTimeEdit> },
-  { &QTimer::staticMetaObject,			     &create_qobject<QTimer> },
-  { &QToolBar::staticMetaObject,		     &create_qobject<QToolBar> },
-  { &QToolBox::staticMetaObject,		     &create_qobject<QToolBox> },
-  { &QToolButton::staticMetaObject,		     &create_qobject<QToolButton> },
-  { &QTranslator::staticMetaObject,		     &create_qobject<QTranslator> },
-  { &QTreeView::staticMetaObject,		     &create_qobject<QTreeView> },
-  { &QTreeWidget::staticMetaObject,		     &create_qobject<QTreeWidget> },
-  { &QVBoxLayout::staticMetaObject,		     &create_qobject<QVBoxLayout> },
-  { &QValidator::staticMetaObject,		     0 },
-  { &QWidget::staticMetaObject,			     &create_qobject<QWidget> },
-  { &QWidgetAction::staticMetaObject,                0 },
+	  { "QtWidgets", &QAbstractItemDelegate::staticMetaObject,	     0 },
+	  { "QtCore", &QAbstractItemModel::staticMetaObject,	     0 },
+	  { "QtWidgets", &QAbstractItemView::staticMetaObject,	     0 },
+	  { "QtWidgets", &QAction::staticMetaObject,			     0 },
+	  { "QtWidgets", &QApplication::staticMetaObject,		     0 },
+	  { "QtWidgets", &QButtonGroup::staticMetaObject,		     &create_qobject<QButtonGroup> },
+	  { "QtWidgets", &QCalendarWidget::staticMetaObject,		     &create_qobject<QCalendarWidget> },
+	  { "QtWidgets", &QCheckBox::staticMetaObject,		     &create_qobject<QCheckBox> },
+	  { "QtGui", &QClipboard::staticMetaObject,		     0 },
+	  { "QtWidgets", &QColorDialog::staticMetaObject,		     &create_qobject<QColorDialog> },
+	  { "QtWidgets", &QColumnView::staticMetaObject,		     &create_qobject<QColumnView> },
+	  { "QtWidgets", &QComboBox::staticMetaObject,		     &create_qobject<QComboBox> },
+	  { "QtCore", &QCoreApplication::staticMetaObject,	     0 },
+	  { "QtWidgets", &QDateEdit::staticMetaObject,		     &create_qobject<QDateEdit> },
+	  { "QtWidgets", &QDateTimeEdit::staticMetaObject,		     &create_qobject<QDateTimeEdit> },
+	  { "QtWidgets", &QDesktopWidget::staticMetaObject,		     &create_qobject<QDesktopWidget> },
+	  { "QtWidgets", &QDial::staticMetaObject,			     &create_qobject<QDial> },
+	  { "QtWidgets", &QDialog::staticMetaObject,			     &create_qobject<QDialog> },
+	  { "QtWidgets", &QDialogButtonBox::staticMetaObject,	     &create_qobject<QDialogButtonBox> },
+	  { "QtWidgets", &QDockWidget::staticMetaObject,		     &create_qobject<QDockWidget> },
+	  { "QtWidgets", &QDoubleSpinBox::staticMetaObject,		     &create_qobject<QDoubleSpinBox> },
+	  { "QtWidgets", &QErrorMessage::staticMetaObject,		     &create_qobject<QErrorMessage> },
+	  { "QtCore", &QFile::staticMetaObject,			     &create_qobject<QFile> },
+	  { "QtWidgets", &QFileDialog::staticMetaObject,		     &create_qobject<QFileDialog> },
+	  { "QtWidgets", &QFocusFrame::staticMetaObject,		     &create_qobject<QFocusFrame> },
+	  { "QtGui", &QFont::staticMetaObject,			     0 },
+	  { "QtWidgets", &QFontDialog::staticMetaObject,		     &create_qobject<QFontDialog> },
+	  { "QtWidgets", &QFrame::staticMetaObject,			     &create_qobject<QFrame> },
+	  { "QtWidgets", &QGraphicsScene::staticMetaObject,		     &create_qobject<QGraphicsScene> },
+	  { "QtWidgets", &QGraphicsView::staticMetaObject,		     &create_qobject<QGraphicsView> },
+	  { "QtWidgets", &QGridLayout::staticMetaObject,		     &create_qobject<QGridLayout> },
+	  { "QtWidgets", &QGroupBox::staticMetaObject,		     &create_qobject<QGroupBox> },
+	  { "QtWidgets", &QHBoxLayout::staticMetaObject,		     &create_qobject<QHBoxLayout> },
+	  { "QtWidgets", &QHeaderView::staticMetaObject,		     0 },
+	  { "QtWidgets", &QInputDialog::staticMetaObject,		     &create_qobject<QInputDialog> },
+	  { "QtWidgets", &QItemDelegate::staticMetaObject,		     &create_qobject<QItemDelegate> },
+	  { "QtWidgets", &QLCDNumber::staticMetaObject,		     &create_qobject<QLCDNumber> },
+	  { "QtWidgets", &QLabel::staticMetaObject,			     &create_qobject<QLabel> },
+	  { "QtWidgets", &QLayout::staticMetaObject,			     0 },
+	  { "QtCore", &QLibrary::staticMetaObject,		     &create_qobject<QLibrary> },
+	  { "QtWidgets", &QLineEdit::staticMetaObject,		     &create_qobject<QLineEdit> },
+	  { "QtWidgets", &QListView::staticMetaObject,		     &create_qobject<QListView> },
+	  { "QtWidgets", &QListWidget::staticMetaObject,		     &create_qobject<QListWidget> },
+	  { "QtCore", &QLocale::staticMetaObject,			     0 },
+	  { "QtWidgets", &QMainWindow::staticMetaObject,		     &create_qobject<QMainWindow> },
+	  { "QtWidgets", &QMdiArea::staticMetaObject,		     &create_qobject<QMdiArea> },
+	  { "QtWidgets", &QMdiSubWindow::staticMetaObject,		     &create_qobject<QMdiSubWindow> },
+	  { "QtWidgets", &QMenu::staticMetaObject,			     &create_qobject<QMenu> },
+	  { "QtWidgets", &QMenuBar::staticMetaObject,		     &create_qobject<QMenuBar> },
+	  { "QtWidgets", &QMessageBox::staticMetaObject,		     &create_qobject<QMessageBox> },
+	  { "QtCore", &QObject::staticMetaObject,			     &create_qobject<QObject> },
+	  { "QtGui", &QPainter::staticMetaObject,		     0 },
+	  { "QtGui", &QPalette::staticMetaObject,		     0 },
+	  { "QtCore", &QPluginLoader::staticMetaObject,		     &create_qobject<QPluginLoader> },
+	  { "QtCore", &QProcess::staticMetaObject,		     &create_qobject<QProcess> },
+	  { "QtWidgets", &QProgressBar::staticMetaObject,		     &create_qobject<QProgressBar> },
+	  { "QtWidgets", &QProgressDialog::staticMetaObject,		     &create_qobject<QProgressDialog> },
+	  { "QtWidgets", &QPushButton::staticMetaObject,		     &create_qobject<QPushButton> },
+	  { "QtWidgets", &QRadioButton::staticMetaObject,		     &create_qobject<QRadioButton> },
+	  { "QtWidgets", &QRubberBand::staticMetaObject,		     0 },
+	  { "QtWidgets", &QScrollArea::staticMetaObject,		     &create_qobject<QScrollArea> },
+	  { "QtCore", &QSettings::staticMetaObject,		     &create_qobject<QSettings> },
+	  { "QtWidgets", &QShortcut::staticMetaObject,		     0 },
+	  { "QtCore", &QSignalMapper::staticMetaObject,		     &create_qobject<QSignalMapper> },
+	  { "QtWidgets", &QSlider::staticMetaObject,			     &create_qobject<QSlider> },
+	  { "QtWidgets", &QSpinBox::staticMetaObject,		     &create_qobject<QSpinBox> },
+	  { "QtWidgets", &QSplashScreen::staticMetaObject,		     &create_qobject<QSplashScreen> },
+	  { "QtWidgets", &QSplitter::staticMetaObject,		     &create_qobject<QSplitter> },
+	  { "QtWidgets", &QStackedLayout::staticMetaObject,		     &create_qobject<QStackedLayout> },
+	  { "QtWidgets", &QStackedWidget::staticMetaObject,		     &create_qobject<QStackedWidget> },
+	  { "QtWidgets", &QStatusBar::staticMetaObject,		     &create_qobject<QStatusBar> },
+	  { "QtCore", &QStringListModel::staticMetaObject,	     &create_qobject<QStringListModel> },
+	  { "QtWidgets", &QTabBar::staticMetaObject,			     &create_qobject<QTabBar> },
+	  { "QtWidgets", &QTabWidget::staticMetaObject,		     &create_qobject<QTabWidget> },
+	  { "QtWidgets", &QTableView::staticMetaObject,		     &create_qobject<QTableView> },
+	  { "QtWidgets", &QTableWidget::staticMetaObject,		     &create_qobject<QTableWidget> },
+	  { "QtCore", &QTemporaryFile::staticMetaObject,		     &create_qobject<QTemporaryFile> },
+	  { "QtGui", &QTextDocument::staticMetaObject,		     &create_qobject<QTextDocument> },
+	  { "QtWidgets", &QTextEdit::staticMetaObject,		     &create_qobject<QTextEdit> },
+	  { "QtCore", &QThread::staticMetaObject,			     &create_qobject<QThread> },
+	  { "QtWidgets", &QTimeEdit::staticMetaObject,		     &create_qobject<QTimeEdit> },
+	  { "QtCore", &QTimer::staticMetaObject,			     &create_qobject<QTimer> },
+	  { "QtWidgets", &QToolBar::staticMetaObject,		     &create_qobject<QToolBar> },
+	  { "QtWidgets", &QToolBox::staticMetaObject,		     &create_qobject<QToolBox> },
+	  { "QtWidgets", &QToolButton::staticMetaObject,		     &create_qobject<QToolButton> },
+	  { "QtCore", &QTranslator::staticMetaObject,		     &create_qobject<QTranslator> },
+	  { "QtWidgets", &QTreeView::staticMetaObject,		     &create_qobject<QTreeView> },
+	  { "QtWidgets", &QTreeWidget::staticMetaObject,		     &create_qobject<QTreeWidget> },
+	  { "QtWidgets", &QVBoxLayout::staticMetaObject,		     &create_qobject<QVBoxLayout> },
+	  { "QtGui", &QValidator::staticMetaObject,		     0 },
+	  { "QtWidgets", &QWidget::staticMetaObject,			     &create_qobject<QWidget> },
+	  { "QtWidgets", &QWidgetAction::staticMetaObject,                0 },
 
-#if QT_VERSION >= 0x040400
-  { &QCommandLinkButton::staticMetaObject,           &create_qobject<QCommandLinkButton> },
-  { &QFormLayout::staticMetaObject,		     &create_qobject<QFormLayout> },
-  { &QPlainTextEdit::staticMetaObject,		     &create_qobject<QPlainTextEdit> },
-  { &QStyledItemDelegate::staticMetaObject,          &create_qobject<QStyledItemDelegate> },
-#endif
+	#if QT_VERSION >= 0x040400
+	  { "QtWidgets", &QCommandLinkButton::staticMetaObject,           &create_qobject<QCommandLinkButton> },
+	  { "QtWidgets", &QFormLayout::staticMetaObject,		     &create_qobject<QFormLayout> },
+	  { "QtWidgets", &QPlainTextEdit::staticMetaObject,		     &create_qobject<QPlainTextEdit> },
+	  { "QtWidgets", &QStyledItemDelegate::staticMetaObject,          &create_qobject<QStyledItemDelegate> },
+	  { "QtGui", &QWindow::staticMetaObject,          &create_qobject<QWindow> },
+	#endif
 
-  { 0, 0 },
-};
+	  { 0, 0 },
+	};
 
 }
 

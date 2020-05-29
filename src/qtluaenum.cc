@@ -1,20 +1,20 @@
 /*
-    This file is part of LibQtLua.
+	This file is part of LibQtLua.
 
-    LibQtLua is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	LibQtLua is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    LibQtLua is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	LibQtLua is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with LibQtLua.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with LibQtLua.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright (C) 2008, Alexandre Becoulet <alexandre.becoulet@free.fr>
+	Copyright (C) 2008, Alexandre Becoulet <alexandre.becoulet@free.fr>
 
 */
 
@@ -26,45 +26,45 @@
 
 namespace QtLua {
 
-  Enum::Enum(const QMetaObject *mo, int index)
-    : Member(mo, index)
-  { 
-  }
+	Enum::Enum(const QMetaObject *mo, int index)
+		: Member(mo, index)
+	{
+	}
 
-  Value Enum::meta_index(State *ls, const Value &key)
-  {
-    int value = _mo->enumerator(_index).keyToValue(key.to_string().constData());
-    return value < 0 ? Value(ls) : Value(ls, value);
-  }
+	Value Enum::meta_index(State *ls, const Value &key)
+	{
+		int value = _mo->enumerator(_index).keyToValue(key.to_string().constData());
+		return value < 0 ? Value(ls) : Value(ls, value);
+	}
 
-  Ref<Iterator> Enum::new_iterator(State *ls)
-  {
-    return QTLUA_REFNEW(EnumIterator, ls, _mo->enumerator(_index));
-  }
+	Ref<Iterator> Enum::new_iterator(State *ls)
+	{
+		return QTLUA_REFNEW(EnumIterator, ls, _mo->enumerator(_index));
+	}
 
-  bool Enum::support(Value::Operation c) const
-  {
-    switch (c)
-      {
-      case Value::OpIndex:
-      case Value::OpIterate:
-	return true;
-      default:
-	return false;
-      }
-  }
+	bool Enum::support(Value::Operation c) const
+	{
+		switch (c)
+		{
+		case Value::OpIndex:
+		case Value::OpIterate:
+			return true;
+		default:
+			return false;
+		}
+	}
 
-  String Enum::get_value_str() const
-  {
-    QMetaEnum me = _mo->enumerator(_index);
+	String Enum::get_value_str() const
+	{
+		QMetaEnum me = _mo->enumerator(_index);
 
-    return String(me.scope()) + "::" + me.name();
-  }
+		return String(me.scope()) + "::" + me.name();
+	}
 
-  void Enum::completion_patch(String &path, String &entry, int &offset)
-  {
-    entry += ".";
-  }
+	void Enum::completion_patch(String &path, String &entry, int &offset)
+	{
+		entry += ".";
+	}
 
 }
 

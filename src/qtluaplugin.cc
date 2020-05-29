@@ -22,8 +22,6 @@
 #include <QtLua/Plugin>
 #include <QtLua/String>
 
-#include "config.hh"
-
 #define STR(n) STR_(n)
 #define STR_(n) #n
 

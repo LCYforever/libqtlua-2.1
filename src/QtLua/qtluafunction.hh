@@ -84,12 +84,12 @@ namespace QtLua {
     /** @This contains class declaration for @ref #QTLUA_FUNCTION.
 	@showcontent
     */
-#define QTLUA_FUNCTION_DECL(name)					\
+#define QTLUA_FUNCTION_DECL(name, description, help)					\
     class QtLua_Function_##name : public QtLua::Function		\
     {									\
-      QtLua::Value::List meta_call(QtLua::State *ls, const QtLua::Value::List &args); \
-      QtLua::String get_description() const;				\
-      QtLua::String get_help() const;					\
+      QtLua::Value::List meta_call(QtLua::State *ls, const QtLua::Value::List &args) override; \
+      QtLua::String get_description() const override { return description; } \
+      QtLua::String get_help() const override { return help; }; \
     public:								\
       QtLua_Function_##name();						\
       QtLua_Function_##name(QtLua::State *ls, const QtLua::String &path); \
@@ -98,13 +98,7 @@ namespace QtLua {
     /** @This contains functions definition for @ref #QTLUA_FUNCTION.
 	@showcontent
     */
-#define QTLUA_FUNCTION_BODY(name, description, help)			\
-    QtLua::String QtLua_Function_##name					\
-    ::get_description() const { return description; }			\
-									\
-    QtLua::String QtLua_Function_##name					\
-    ::get_help() const { return help; }					\
-									\
+#define QTLUA_FUNCTION_BODY(name)			\
     QtLua_Function_##name						\
     ::QtLua_Function_##name() { }					\
     									\
@@ -125,8 +119,8 @@ namespace QtLua {
 	@showcontent
     */
 #define QTLUA_FUNCTION(name, description, help)				\
-    QTLUA_FUNCTION_DECL(name)						\
-    QTLUA_FUNCTION_BODY(name, description, help)
+    QTLUA_FUNCTION_DECL(name, description, help)			\
+    QTLUA_FUNCTION_BODY(name)
 
     /** @This declares and registers a @ref Function object on a QtLua
 	@ref State object as a global variable.  @showcontent */

@@ -13,8 +13,69 @@ QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluatablegridmodel.hh OPTIONS -fQtLua/TableGrid
 QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluastate.hh          OPTIONS -fQtLua/State)
 QT5_WRAP_CPP(MOC_OUTFILES qtluaqtlib.hh)
 
+SET(QTLUA_HEADERS 
+	QtLua/qtluafunction.hh        QtLua/qtluafunction.hxx
+	QtLua/qtluaconsole.hh         QtLua/qtluaconsole.hxx
+	QtLua/qtluatabletreemodel.hh  QtLua/qtluatabletreemodel.hxx
+	QtLua/qtluaitemviewdialog.hh  QtLua/qtluaitemviewdialog.hxx
+	QtLua/qtluatablegridmodel.hh  QtLua/qtluatablegridmodel.hxx
+	QtLua/qtlualuamodel.hh        QtLua/qtlualuamodel.hxx
+	QtLua/qtluauseritem.hh        QtLua/qtluauseritem.hxx
+	QtLua/qtluauserlistitem.hh    QtLua/qtluauserlistitem.hxx
+	QtLua/qtluauseritemmodel.hh   QtLua/qtluauseritemmodel.hxx
+	QtLua/qtluauseritemselectionmodel.hh QtLua/qtluauseritemselectionmodel.hxx
+	QtLua/qtluaiterator.hh        QtLua/qtluaiterator.hxx
+	QtLua/qtluaplugin.hh          QtLua/qtluaplugin.hxx
+	QtLua/qtluastate.hh           QtLua/qtluastate.hxx
+	QtLua/qtluauserdata.hh        QtLua/qtluauserdata.hxx
+	QtLua/qtluauserobject.hh      QtLua/qtluauserobject.hxx
+	QtLua/qtluavaluebase.hh       QtLua/qtluavaluebase.hxx
+	QtLua/qtluavalue.hh           QtLua/qtluavalue.hxx
+	QtLua/qtluavalueref.hh        QtLua/qtluavalueref.hxx
+	QtLua/qtluaref.hh
+	QtLua/qtluastring.hh          QtLua/qtluastring.hxx
+	QtLua/qtluaqhashproxy.hh      QtLua/qtluaqhashproxy.hxx
+	QtLua/qtluaqvectorproxy.hh    QtLua/qtluaqvectorproxy.hxx
+	QtLua/qtluaqlistproxy.hh      QtLua/qtluaqlistproxy.hxx
+	QtLua/qtluaqlinkedlistproxy.hh QtLua/qtluaqlinkedlistproxy.hxx
+	QtLua/qtluaarrayproxy.hh      QtLua/qtluaarrayproxy.hxx
+	QtLua/qtluametatype.hh        QtLua/qtluametatype.hxx
+	QtLua/qtluadispatchproxy.hh   QtLua/qtluadispatchproxy.hxx)
+
+SET(INTERNAL_HEADERS
+	internal/qtluaenum.hh internal/qtluaenum.hxx
+	internal/qtluaenumiterator.hh internal/qtlualistiterator.hh
+	internal/qtluamember.hh internal/qtluamember.hxx
+	internal/qtluametacache.hh internal/qtluametacache.hxx
+	internal/qtluamethod.hh internal/qtluamethod.hxx
+	internal/qtluapoolarray.hh internal/qtluaqobjectiterator.hh
+	internal/qtluaqmetaobjectwrapper.hh internal/qtluatableiterator.hh
+	internal/qtluaproperty.hh internal/qtluaproperty.hxx
+	internal/qtluaqmetavalue.hh internal/qtluaqmetavalue.hxx
+	internal/qtluaqobjectwrapper.hh internal/qtluaqobjectwrapper.hxx
+	internal/qtluatabletreekeys.hh internal/qtluatabletreekeys.hxx
+	)
+
+SET(BINDINGS_FILES
+	binding/qtluabindingmgr.hh binding/qtluabindingmgr.cc
+	binding/qtluaregister.hh
+	)
+
+SET(BINDING_INTERFACES
+	interfaces/qtluainterfaces_binding.hh interfaces/qtluainterfaces_binding.cc
+	interfaces/qtluaqwindow_binding.hh interfaces/qtluaqwindow_binding.cc
+	)
+
+source_group("binding" FILES ${BINDINGS_FILES})
+source_group("interfaces" FILES ${BINDING_INTERFACES})
+
 ADD_LIBRARY(qtlua SHARED
 			qtluaconfig.hh
+			qtluaqtlib.hh
+			${INTERNAL_HEADERS}
+			${QTLUA_HEADERS}
+			${BINDINGS_FILES}
+			${BINDING_INTERFACES}
             qtluaconsole.cc qtluaenum.cc
             qtluaenumiterator.cc qtluafunction.cc
             qtluauseritem.cc qtluauseritemmodel.cc
@@ -31,7 +92,7 @@ ADD_LIBRARY(qtlua SHARED
             qtluatabletreemodel.cc qtluauserdata.cc
             qtluavaluebase.cc qtluavalue.cc
             qtluavalueref.cc qtluadispatchproxy.cc
-
+			
             ${MOC_OUTFILES})
 
 QT5_USE_MODULES(qtlua Widgets Core UiTools)
@@ -43,33 +104,33 @@ INSTALL(TARGETS qtlua
 	ARCHIVE DESTINATION ${INSTALL_LIB})
 
 INSTALL(FILES
-        QtLua/Function           QtLua/qtluafunction.hh        QtLua/qtluafunction.hxx
-        QtLua/Console            QtLua/qtluaconsole.hh         QtLua/qtluaconsole.hxx
-        QtLua/TableTreeModel     QtLua/qtluatabletreemodel.hh  QtLua/qtluatabletreemodel.hxx
-        QtLua/ItemViewDialog     QtLua/qtluaitemviewdialog.hh  QtLua/qtluaitemviewdialog.hxx
-        QtLua/TableGridModel     QtLua/qtluatablegridmodel.hh  QtLua/qtluatablegridmodel.hxx
-        QtLua/LuaModel           QtLua/qtlualuamodel.hh        QtLua/qtlualuamodel.hxx
-        QtLua/UserItem           QtLua/qtluauseritem.hh        QtLua/qtluauseritem.hxx
-        QtLua/UserListItem       QtLua/qtluauserlistitem.hh    QtLua/qtluauserlistitem.hxx
-        QtLua/UserItemModel      QtLua/qtluauseritemmodel.hh   QtLua/qtluauseritemmodel.hxx
-        QtLua/UserItemSelectionModel QtLua/qtluauseritemselectionmodel.hh QtLua/qtluauseritemselectionmodel.hxx
-        QtLua/Iterator           QtLua/qtluaiterator.hh        QtLua/qtluaiterator.hxx
-        QtLua/Plugin             QtLua/qtluaplugin.hh          QtLua/qtluaplugin.hxx
-        QtLua/State              QtLua/qtluastate.hh           QtLua/qtluastate.hxx
-        QtLua/UserData           QtLua/qtluauserdata.hh        QtLua/qtluauserdata.hxx
-        QtLua/UserObject         QtLua/qtluauserobject.hh      QtLua/qtluauserobject.hxx
-        QtLua/ValueBase          QtLua/qtluavaluebase.hh       QtLua/qtluavaluebase.hxx
-        QtLua/Value              QtLua/qtluavalue.hh           QtLua/qtluavalue.hxx
-        QtLua/ValueRef           QtLua/qtluavalueref.hh        QtLua/qtluavalueref.hxx
-        QtLua/Ref                QtLua/qtluaref.hh
-        QtLua/String             QtLua/qtluastring.hh          QtLua/qtluastring.hxx
-        QtLua/QHashProxy         QtLua/qtluaqhashproxy.hh      QtLua/qtluaqhashproxy.hxx
-        QtLua/QVectorProxy       QtLua/qtluaqvectorproxy.hh    QtLua/qtluaqvectorproxy.hxx
-        QtLua/QListProxy         QtLua/qtluaqlistproxy.hh      QtLua/qtluaqlistproxy.hxx
-        QtLua/QLinkedListProxy   QtLua/qtluaqlinkedlistproxy.hh QtLua/qtluaqlinkedlistproxy.hxx
-        QtLua/ArrayProxy         QtLua/qtluaarrayproxy.hh      QtLua/qtluaarrayproxy.hxx
-        QtLua/MetaType           QtLua/qtluametatype.hh        QtLua/qtluametatype.hxx
-        QtLua/DispatchProxy      QtLua/qtluadispatchproxy.hh   QtLua/qtluadispatchproxy.hxx
-
+        QtLua/Function
+		QtLua/Console
+        QtLua/TableTreeModel
+        QtLua/ItemViewDialog
+        QtLua/TableGridModel
+        QtLua/LuaModel
+        QtLua/UserItem
+        QtLua/UserListItem
+        QtLua/UserItemModel
+        QtLua/UserItemSelectionModel
+        QtLua/Iterator
+        QtLua/Plugin
+        QtLua/State
+        QtLua/UserData
+        QtLua/UserObject
+        QtLua/ValueBase
+        QtLua/Value
+        QtLua/ValueRef
+        QtLua/Ref
+        QtLua/String
+        QtLua/QHashProxy
+        QtLua/QVectorProxy
+        QtLua/QListProxy
+        QtLua/QLinkedListProxy
+        QtLua/ArrayProxy
+        QtLua/MetaType
+        QtLua/DispatchProxy
+		${HEADERS}
         DESTINATION ${INSTALL_INC}/QtLua)
 
