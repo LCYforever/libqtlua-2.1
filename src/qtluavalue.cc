@@ -43,8 +43,11 @@ namespace QtLua {
 			return;
 		}
 
-		lua_pushnumber(st, _id);
+		lua_pushlightuserdata(st, &State::_key_objects);
 		lua_rawget(st, LUA_REGISTRYINDEX);
+		lua_pushnumber(st, _id);
+		lua_rawget(st, -2);
+		lua_remove(st, -2);
 	}
 
 	int Value::empty_fcn(lua_State *st)
@@ -56,28 +59,39 @@ namespace QtLua {
 	{
 		check_state();
 		lua_State *lst = _st->_lst;
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
+
 		lua_pushnumber(lst, _id);
 #if LUA_VERSION_NUM < 502
 		lua_pushvalue(lst, LUA_GLOBALSINDEX);
 #else
 		lua_pushglobaltable(lst);
 #endif
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void Value::init_table()
 	{
 		check_state();
 		lua_State *lst = _st->_lst;
+
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		lua_newtable(lst);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void Value::init_thread(const Value &main)
 	{
 		check_state();
 		lua_State *lst = _st->_lst;
+
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		lua_State *th = lua_newthread(lst);
 
@@ -95,18 +109,20 @@ namespace QtLua {
 			main.push_value(lst);
 		}
 		catch (...) {
-			lua_pop(lst, 2);
+			lua_pop(lst, 3);
 			throw;
 		}
 
 		if (main.type() != TFunction)
 		{
-			lua_pop(lst, 3);
+			lua_pop(lst, 4);
 			QTLUA_THROW(QtLua::Value, "A `lua::function' value is expected as coroutine entry point.");
 		}
 
+		lua_pushvalue(lst, -1);
 		lua_xmove(lst, th, 1);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	Value & Value::operator=(Bool n)
@@ -114,9 +130,12 @@ namespace QtLua {
 		if (_st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 			lua_pushboolean(lst, n);
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 		return *this;
 	}
@@ -126,9 +145,12 @@ namespace QtLua {
 		if (_st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 			lua_pushnumber(lst, n);
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 		return *this;
 	}
@@ -138,9 +160,12 @@ namespace QtLua {
 		if (_st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 			lua_pushlstring(lst, str.constData(), str.size());
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 		return *this;
 	}
@@ -150,12 +175,15 @@ namespace QtLua {
 		if (_st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 			if (ud.valid())
 				ud->push_ud(lst);
 			else
 				lua_pushnil(lst);
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 		return *this;
 	}
@@ -165,9 +193,12 @@ namespace QtLua {
 		, _id(_id_counter++)
 	{
 		lua_State *lst = _st->_lst;
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		QObjectWrapper::get_wrapper(_st, obj, reparent, delete_)->push_ud(lst);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	Value & Value::operator=(QObject *obj)
@@ -175,9 +206,12 @@ namespace QtLua {
 		if (_st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 			QObjectWrapper::get_wrapper(_st, obj)->push_ud(lst);
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 		return *this;
 	}
@@ -194,9 +228,12 @@ namespace QtLua {
 		if (_st && _st != lv._st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 			lua_pushnil(lst);
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 
 		_st = lv._st;
@@ -204,17 +241,20 @@ namespace QtLua {
 		if (_st)
 		{
 			lua_State *lst = _st->_lst;
+			lua_pushlightuserdata(lst, &State::_key_objects);
+			lua_rawget(lst, LUA_REGISTRYINDEX);
 			lua_pushnumber(lst, _id);
 
 			try {
 				lv.push_value(lst);
 			}
 			catch (...) {
-				lua_pop(lst, 1);
+				lua_pop(lst, 2);
 				throw;
 			}
 
-			lua_rawset(lst, LUA_REGISTRYINDEX);
+			lua_rawset(lst, -3);
+			lua_pop(lst, 1);
 		}
 
 		return *this;
@@ -228,15 +268,18 @@ namespace QtLua {
 			return;
 
 		lua_State *lst = _st->_lst;
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		try {
 			lv.push_value(lst);
 		}
 		catch (...) {
-			lua_pop(lst, 1);
+			lua_pop(lst, 2);
 			throw;
 		}
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	Value::Value(const State *ls, const Value &lv)
@@ -249,23 +292,29 @@ namespace QtLua {
 		assert(_st == lv._st);
 
 		lua_State *lst = _st->_lst;
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		try {
 			lv.push_value(lst);
 		}
 		catch (...) {
-			lua_pop(lst, 1);
+			lua_pop(lst, 2);
 			throw;
 		}
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void Value::cleanup()
 	{
 		lua_State *lst = _st->_lst;
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		lua_pushnil(lst);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	Value::Value(int index, const State *st)
@@ -274,15 +323,18 @@ namespace QtLua {
 	{
 		lua_State *lst = _st->_lst;
 
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _id);
 		if (index < 0
 #if LUA_VERSION_NUM < 502
 			&& index != LUA_GLOBALSINDEX
 #endif
 			)
-			index--;
+			index -= 2;
 		lua_pushvalue(lst, index);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 }

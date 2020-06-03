@@ -1,8 +1,5 @@
 
-SET(QTLUA_LIB_SRCS )
-
 # Generate moc files
-
 QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluaconsole.hh        OPTIONS -fQtLua/Console)
 QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluauseritemselectionmodel.hh OPTIONS -fQtLua/UserItemSelectionModel)
 QT5_WRAP_CPP(MOC_OUTFILES QtLua/qtluauseritemmodel.hh  OPTIONS -fQtLua/UserItemModel)
@@ -131,6 +128,6 @@ INSTALL(FILES
         QtLua/ArrayProxy
         QtLua/MetaType
         QtLua/DispatchProxy
-		${HEADERS}
+		${QTLUA_HEADERS}
         DESTINATION ${INSTALL_INC}/QtLua)
 

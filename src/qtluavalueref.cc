@@ -35,16 +35,19 @@ namespace QtLua {
 			return;
 
 		lua_State *lst = _st->_lst;
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 
 		lua_pushnumber(lst, _table_id);
 		lua_pushnumber(lst, tid);
-		lua_rawget(lst, LUA_REGISTRYINDEX);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawget(lst, -3);
+		lua_rawset(lst, -3);
 
 		lua_pushnumber(lst, _key_id);
 		lua_pushnumber(lst, kid);
-		lua_rawget(lst, LUA_REGISTRYINDEX);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawget(lst, -3);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void ValueRef::copy_table(double id)
@@ -53,11 +56,13 @@ namespace QtLua {
 			return;
 
 		lua_State *lst = _st->_lst;
-
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _table_id);
 		lua_pushnumber(lst, id);
-		lua_rawget(lst, LUA_REGISTRYINDEX);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawget(lst, -3);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void ValueRef::copy_key(double id)
@@ -66,11 +71,13 @@ namespace QtLua {
 			return;
 
 		lua_State *lst = _st->_lst;
-
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _key_id);
 		lua_pushnumber(lst, id);
-		lua_rawget(lst, LUA_REGISTRYINDEX);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawget(lst, -3);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void ValueRef::cleanup()
@@ -78,13 +85,16 @@ namespace QtLua {
 		assert(_st);
 		lua_State *lst = _st->_lst;
 
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _table_id);
 		lua_pushnil(lst);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
 
 		lua_pushnumber(lst, _key_id);
 		lua_pushnil(lst);
-		lua_rawset(lst, LUA_REGISTRYINDEX);
+		lua_rawset(lst, -3);
+		lua_pop(lst, 1);
 	}
 
 	void ValueRef::push_value(lua_State *st) const
@@ -95,17 +105,20 @@ namespace QtLua {
 			return;
 		}
 
+		lua_pushlightuserdata(st, &State::_key_objects);
+		lua_rawget(st, LUA_REGISTRYINDEX);
 		lua_pushnumber(st, _table_id);
-		lua_rawget(st, LUA_REGISTRYINDEX);
+		lua_rawget(st, -2);
 		lua_pushnumber(st, _key_id);
-		lua_rawget(st, LUA_REGISTRYINDEX);
+		lua_rawget(st, -3);
 		try {
 			State::lua_pgettable(st, -2);
 		}
 		catch (...) {
-			lua_pop(st, 2);
+			lua_pop(st, 3);
 			throw;
 		}
+		lua_remove(st, -2);
 		lua_remove(st, -2);
 	}
 
@@ -114,20 +127,22 @@ namespace QtLua {
 		check_state();
 		lua_State *lst = _st->_lst;
 
+		lua_pushlightuserdata(lst, &State::_key_objects);
+		lua_rawget(lst, LUA_REGISTRYINDEX);
 		lua_pushnumber(lst, _table_id);
-		lua_rawget(lst, LUA_REGISTRYINDEX);
+		lua_rawget(lst, -2);
 		lua_pushnumber(lst, _key_id);
-		lua_rawget(lst, LUA_REGISTRYINDEX);
+		lua_rawget(lst, -3);
 		try {
 			State::lua_pgettable(lst, -2);
 		}
 		catch (...) {
-			lua_pop(lst, 2);
+			lua_pop(lst, 3);
 			throw;
 		}
 
 		Value res(-1, _st);
-		lua_pop(lst, 2);
+		lua_pop(lst, 3);
 		return res;
 	}
 
@@ -136,8 +151,10 @@ namespace QtLua {
 		check_state();
 		lua_State *lst = _st->_lst;
 
-		lua_pushnumber(lst, _table_id);
+		lua_pushlightuserdata(lst, &State::_key_objects);
 		lua_rawget(lst, LUA_REGISTRYINDEX);
+		lua_pushnumber(lst, _table_id);
+		lua_rawget(lst, -2);
 
 		int t = lua_type(lst, -1);
 
@@ -160,16 +177,16 @@ namespace QtLua {
 				throw;
 			}
 			k._st = 0;
-
+			lua_pop(lst, 1);
 			return;
 		}
 
 		case Value::TTable:
 			lua_pushnumber(lst, _key_id);
-			lua_rawget(lst, LUA_REGISTRYINDEX);
+			lua_rawget(lst, -3);
 			if (lua_isnil(lst, -1))
 			{
-				lua_pop(lst, 2);
+				lua_pop(lst, 3);
 			}
 			else
 			{
@@ -177,7 +194,7 @@ namespace QtLua {
 					v.push_value(lst);
 				}
 				catch (...) {
-					lua_pop(lst, 2);
+					lua_pop(lst, 3);
 					throw;
 				}
 
@@ -185,11 +202,11 @@ namespace QtLua {
 					State::lua_psettable(lst, -3);
 				}
 				catch (...) {
-					lua_pop(lst, 3);
+					lua_pop(lst, 4);
 					throw;
 				}
 
-				lua_pop(lst, 1);
+				lua_pop(lst, 2);
 			}
 			return;
 

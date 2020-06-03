@@ -45,6 +45,7 @@ namespace QtLua {
 	char State::_key_threads;
 	char State::_key_item_metatable;
 	char State::_key_this;
+	char State::_key_objects;
 
 	/* save current thread lua_State and set new lua_State */
 #define QTLUA_SWITCH_THREAD(this_, st)	     \
@@ -779,7 +780,6 @@ int State::lua_meta_item_##n(lua_State *st)				\
 			throw std::bad_alloc();
 
 		// creat metatable for UserData events
-
 		lua_pushlightuserdata(_mst, &_key_item_metatable);
 		lua_newtable(_mst);
 
@@ -808,7 +808,6 @@ int State::lua_meta_item_##n(lua_State *st)				\
 		lua_rawset(_mst, LUA_REGISTRYINDEX);
 
 		// pointer to this
-
 		lua_pushlightuserdata(_mst, &_key_this);
 		lua_pushlightuserdata(_mst, this);
 		lua_rawset(_mst, LUA_REGISTRYINDEX);
@@ -826,6 +825,10 @@ int State::lua_meta_item_##n(lua_State *st)				\
 
 		lua_rawset(_mst, LUA_REGISTRYINDEX);
 #endif
+		// create a table to store all QObject wrapper
+		lua_pushlightuserdata(_mst, &_key_objects);
+		lua_newtable(_mst);
+		lua_rawset(_mst, LUA_REGISTRYINDEX);
 
 		_debug_output = false;
 		_yield_on_return = false;

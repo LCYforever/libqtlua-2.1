@@ -317,6 +317,7 @@ private:
   static char _key_threads;
   static char _key_item_metatable;
   static char _key_this;
+  static char _key_objects;
 
   // QObjects wrappers are referenced here
   wrapper_hash_t _whash;
