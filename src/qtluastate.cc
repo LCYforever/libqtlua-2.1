@@ -241,6 +241,77 @@ namespace QtLua {
 		return 0;
 	}
 
+	int State::lua_class_cast(lua_State *L)
+	{
+		State *this_ = get_this(L);
+		QTLUA_SWITCH_THREAD(this_, L);
+
+		/* stack: userdata, string */
+		if (lua_gettop(L) < 2) {
+			lua_pushliteral(L, "Miss arguments to iskindof.");
+			lua_error(L);
+			return 0;
+		}
+		if (!lua_isuserdata(L, 1)) {
+			lua_pushliteral(L, "Invalid argument #1 to qt.cast: userdata expected.");
+			lua_error(L);
+			return 0;
+		}
+		if (!lua_isstring(L, 2)) {
+			lua_pushliteral(L, "Invalid argument #2 to qt.cast: string expected.");
+			lua_error(L);
+			return 0;
+		}
+		const char *name = lua_tostring(L, 2);
+		lua_pushvalue(L, 1);
+		luaL_getmetatable(L, name);
+		lua_setmetatable(L, -2);
+
+		QTLUA_RESTORE_THREAD(this_);
+		return 1;
+	}
+
+	int State::lua_class_inherit(lua_State *L)
+	{
+		State *this_ = get_this(L);
+		QTLUA_SWITCH_THREAD(this_, L);
+
+		/*stack: name, base*/
+		if (lua_gettop(L) < 2) {
+			lua_pushliteral(L, "Mess arguments to newclass.");
+			lua_error(L);
+			return 0;
+		}
+
+		const char *name = luaL_checkstring(L, 1);
+		if (!name) {
+			lua_pushliteral(L, "Invalid argument #1 to inherit: string expected.");
+			lua_error(L);
+			return 0;
+		}
+
+		if (!lua_getmetatable(L, 2)) {
+			lua_pushliteral(L, "Invalid argument #2 to inherit: class expected.");
+			lua_error(L);
+			return 0;
+		}
+
+		lua_gettable(L, LUA_REGISTRYINDEX);
+		const char *base = luaL_checkstring(L, -1);
+		if (!base) {
+			lua_pop(L, 1);
+			lua_pushliteral(L, "Invalid argument #2 to inherit: class expected.");
+			lua_error(L);
+			return 0;
+		}
+		lua_pop(L, 1);
+
+		lua_class(L, name, base);
+
+		QTLUA_RESTORE_THREAD(this_);
+		return 1;
+	}
+
 	int State::lua_cmd_qtype(lua_State *st)
 	{
 		State *this_ = get_this(st);
@@ -427,7 +498,9 @@ int State::lua_meta_item_##n(lua_State *st)				\
 		State		*this_ = get_this(st);
 		QTLUA_SWITCH_THREAD(this_, st);
 
-		UserData::get_ud(st, 1).~Ref<UserData>();
+		int  t = lua_type(st, 1);
+		if (t == LUA_TUSERDATA)
+			UserData::get_ud(st, 1).~Ref<UserData>();
 
 		QTLUA_RESTORE_THREAD(this_);
 		return 0;
@@ -634,6 +707,92 @@ int State::lua_meta_item_##n(lua_State *st)				\
 #endif
 	}
 
+	void State::set_global(const String &name, lua_CFunction f)
+	{
+#if LUA_VERSION_NUM < 502
+		set_global_r(name, f, LUA_GLOBALSINDEX);
+#else
+		try {
+			lua_pushglobaltable(_lst);
+			set_global_r(name, f, lua_gettop(_lst));
+			lua_pop(_lst, 1);
+		}
+		catch (...) {
+			lua_pop(_lst, 1);
+			throw;
+		}
+#endif
+	}
+
+	void State::set_global_r(const String &name, lua_CFunction f, int tblidx)
+	{
+		int len = name.indexOf('.', 0);
+
+		if (len < 0)
+		{
+			// set function in table if last
+			lua_pushstring(_lst, name.constData());
+			lua_pushcfunction(_lst, f);
+
+			try {
+				lua_psettable(_lst, tblidx);
+			}
+			catch (...) {
+				lua_pop(_lst, 2);
+				throw;
+			}
+		}
+		else
+		{
+			// find intermediate value in path
+			String prefix(name.mid(0, len));
+			lua_pushstring(_lst, prefix.constData());
+
+			try {
+				lua_pgettable(_lst, tblidx);
+			}
+			catch (...) {
+				lua_pop(_lst, 1);
+				throw;
+			}
+
+			if (lua_isnil(_lst, -1))
+			{
+				// create intermediate table
+				lua_pop(_lst, 1);
+				lua_pushstring(_lst, prefix.constData());
+				lua_newtable(_lst);
+
+				try {
+					set_global_r(name.mid(len + 1), f, lua_gettop(_lst));
+					lua_psettable(_lst, tblidx);
+				}
+				catch (...) {
+					lua_pop(_lst, 2);
+					throw;
+				}
+			}
+			else if (lua_istable(_lst, -1))
+			{
+				// use existing intermediate table
+				try {
+					set_global_r(name.mid(len + 1), f, lua_gettop(_lst));
+					lua_pop(_lst, 1);
+				}
+				catch (...) {
+					lua_pop(_lst, 1);
+					throw;
+				}
+			}
+			else
+			{
+				// bad existing intermediate value
+				lua_pop(_lst, 1);
+				QTLUA_THROW(QtLua::State, "Can not set the global, the `%' key already exists.", .arg(name));
+			}
+		}
+	}
+
 	void State::get_global_r(const String &name, Value &value, int tblidx) const
 	{
 		int len = name.indexOf('.', 0);
@@ -781,30 +940,7 @@ int State::lua_meta_item_##n(lua_State *st)				\
 
 		// creat metatable for UserData events
 		lua_pushlightuserdata(_mst, &_key_item_metatable);
-		lua_newtable(_mst);
-
-#define LUA_META_BIND(n)			\
-  lua_pushstring(_mst, "__" #n);			\
-  lua_pushcfunction(_mst, lua_meta_item_##n);	\
-  lua_rawset(_mst, -3);
-
-		LUA_META_BIND(add);
-		LUA_META_BIND(sub);
-		LUA_META_BIND(mul);
-		LUA_META_BIND(div);
-		LUA_META_BIND(mod);
-		LUA_META_BIND(pow);
-		LUA_META_BIND(unm);
-		LUA_META_BIND(concat);
-		LUA_META_BIND(len);
-		LUA_META_BIND(eq);
-		LUA_META_BIND(lt);
-		LUA_META_BIND(le);
-		LUA_META_BIND(index);
-		LUA_META_BIND(newindex);
-		LUA_META_BIND(call);
-		LUA_META_BIND(gc);
-
+		State::lua_new_metatable(_mst, "qt.UserData", true);
 		lua_rawset(_mst, LUA_REGISTRYINDEX);
 
 		// pointer to this
@@ -982,6 +1118,254 @@ int State::lua_meta_item_##n(lua_State *st)				\
 #endif
 	}
 
+	void State::lua_reg_qtevent(lua_State *L)
+	{
+#define LUA_META_BIND(n)			\
+  lua_pushstring(L, "__" #n);			\
+  lua_pushcfunction(L, lua_meta_item_##n);	\
+  lua_rawset(L, -3);
+
+		LUA_META_BIND(add);
+		LUA_META_BIND(sub);
+		LUA_META_BIND(mul);
+		LUA_META_BIND(div);
+		LUA_META_BIND(mod);
+		LUA_META_BIND(pow);
+		LUA_META_BIND(unm);
+		LUA_META_BIND(concat);
+		LUA_META_BIND(len);
+		LUA_META_BIND(eq);
+		LUA_META_BIND(lt);
+		LUA_META_BIND(le);
+		LUA_META_BIND(index);
+		LUA_META_BIND(newindex);
+		LUA_META_BIND(call);
+		LUA_META_BIND(gc);
+	}
+
+	int State::class_table_get_index(lua_State* L)
+	{
+		// stack:  obj key ... obj
+		while (lua_getmetatable(L, -1)) {   /* stack: obj key ... obj mt */
+			lua_remove(L, -2);              /* stack: obj key ... mt */
+
+			lua_pushvalue(L, 2);            /* stack: obj key ... mt key */
+			lua_rawget(L, -2);              /* stack: obj key ... mt value */
+			if (!lua_isnil(L, -1)) {
+				return 1;
+			}
+			else {
+				lua_pop(L, 1);
+			}
+		}
+		lua_pushnil(L);
+		return 1;
+	}
+
+	int State::class_index_event(lua_State* L)
+	{
+		int t = lua_type(L, 1);
+		if (t == LUA_TUSERDATA)
+		{
+			/* Access alternative table */
+#if LUA_VERSION_NUM < 502/* new macro on version 5.1 */
+			lua_getfenv(L, 1);
+			if (!lua_rawequal(L, -1, LUA_REGISTRYINDEX)) {
+				lua_pushvalue(L, 2); /* key */
+				lua_gettable(L, -2); /* on lua 5.1, we trade the "tolua_peers" lookup for a gettable call */
+				if (!lua_isnil(L, -1))
+					return 1;
+			};
+#else
+		/* Access alternative table */
+		// first search uservalue table
+			lua_getuservalue(L, 1);
+			if (lua_istable(L, -1)) {
+				//            lua_insert(L, -2);
+				lua_pushvalue(L, 2); /* key */
+				lua_gettable(L, -2);
+				if (!lua_isnil(L, -1))
+					return 1;
+			};
+#endif
+			lua_settop(L, 2);                        /* stack: obj key */
+													 /* Try metatables */
+			lua_pushvalue(L, 1);                     /* stack: obj key obj */
+			class_table_get_index(L);
+			return 1;
+		}
+		else if (t == LUA_TTABLE)
+		{
+			lua_pushvalue(L, 1);
+			class_table_get_index(L);
+			return 1;
+		}
+		lua_pushnil(L);
+		return 1;
+	}
+
+	int State::class_newindex_event(lua_State* L)
+	{
+		int t = lua_type(L, 1);
+		if (t == LUA_TTABLE)
+		{
+			lua_getmetatable(L, 1);  /* stack: t k v mt */
+			lua_replace(L, 1);      /* stack: mt k v */
+			lua_rawset(L, 1);
+		}
+		else if (t == LUA_TUSERDATA)
+		{
+			storeatubox(L, 1);
+		}
+		return 0;
+	}
+
+	void State::storeatubox(lua_State* L, int lo)
+	{
+#if LUA_VERSION_NUM < 502
+		lua_getfenv(L, lo);
+		if (lua_rawequal(L, -1, LUA_REGISTRYINDEX)) {
+			lua_pop(L, 1);
+			lua_newtable(L);
+			lua_pushvalue(L, -1);
+			lua_setfenv(L, lo);    /* stack: k,v,table  */
+		};
+		lua_insert(L, -3);
+		lua_settable(L, -3); /* on lua 5.1, we trade the "tolua_peers" lookup for a settable call */
+		lua_pop(L, 1);
+#else
+		// save in uservalue(peer)
+		lua_getuservalue(L, lo);                    /* stack: u k v ut */
+		if (lua_isnil(L, -1))
+		{
+			lua_pop(L, 1);                         /* stack: u k v */
+			lua_newtable(L);                        /* stack: u k v table */
+			lua_pushvalue(L, -1);                   /* stack: u k v table table */
+			lua_setuservalue(L, lo);                /* stack: u k v table */
+		};
+		lua_insert(L, -3);                          /* stack: u table k v */
+		lua_settable(L, -3);                        /* stack: u table */
+		lua_pop(L, 1);                              /* stack: u */
+#endif
+	}
+
+	void State::lua_reg_classevent(lua_State *L)
+	{
+		lua_pushliteral(L, "__index");
+		lua_pushcfunction(L, class_index_event);
+		lua_rawset(L, -3);
+		lua_pushliteral(L, "__newindex");
+		lua_pushcfunction(L, class_newindex_event);
+		lua_rawset(L, -3);
+
+	}
+
+	void State::lua_new_metatable(lua_State *L, const char *name, bool qt)
+	{
+		int r = luaL_newmetatable(L, name);
+		if (r) {
+			lua_pushvalue(L, -1);
+			lua_pushstring(L, name);
+			lua_settable(L, LUA_REGISTRYINDEX); /* reg[mt] = type_name */
+		};
+
+		if (r)
+		{
+			if (qt)
+				lua_reg_qtevent(L);		/* set qt meta events */
+			else
+				lua_reg_classevent(L);	/* set class meta events */
+		}
+
+		lua_pushliteral(L, ".classname");   // stack: metatable ".classname"
+		lua_pushstring(L, name);            // stack: metatable ".classname" name
+		lua_rawset(L, -3);                  // stack: metatable[.classname] = name
+	}
+
+	void State::lua_class(lua_State *L, const char *name, const char *base)
+	{
+		lua_new_metatable(L, name);
+
+		/* set meta table inheritance */
+		if (base && *base)
+		{
+			luaL_getmetatable(L, base);
+		}
+		else {
+
+			if (lua_getmetatable(L, -1)) { /* already has a mt, we don't overwrite it */
+				lua_pop(L, 1);
+				return;
+			};
+			luaL_getmetatable(L, "qt.UserData");
+		};
+		lua_setmetatable(L, -2);
+		lua_pop(L, 1);
+
+		/* push registry.super */
+		lua_pushliteral(L, "tolua_super");
+		lua_rawget(L, LUA_REGISTRYINDEX);    /* stack: super */
+		if (lua_isnil(L, -1))
+		{
+			/* create table */
+			lua_pop(L, 1);
+			lua_newtable(L);
+			lua_pushliteral(L, "tolua_super");
+			lua_pushvalue(L, -2);
+			lua_rawset(L, LUA_REGISTRYINDEX);
+		}
+		luaL_getmetatable(L, name);          /* stack: super mt */
+		lua_rawget(L, -2);                   /* stack: super table */
+		if (lua_isnil(L, -1))
+		{
+			/* create table */
+			lua_pop(L, 1);
+			lua_newtable(L);                    /* stack: super table */
+			luaL_getmetatable(L, name);          /* stack: super table mt */
+			lua_pushvalue(L, -2);                /* stack: super table mt table */
+			lua_rawset(L, -4);                   /* stack: super[mt]=table table */
+		}
+
+		if (base && *base)
+		{
+			/* set base as super class */
+			lua_pushstring(L, base);
+			lua_pushboolean(L, 1);
+			lua_rawset(L, -3);                    /* stack: super table[base]=1 */
+
+			/* set all super class of base as super class of name */
+			luaL_getmetatable(L, base);          /* stack: super table base_mt */
+			lua_rawget(L, -3);                   /* stack: super table base_table */
+			if (lua_istable(L, -1))
+			{
+				/* traverse base table */
+				lua_pushnil(L);  /* first key */
+				while (lua_next(L, -2) != 0)
+				{
+					/* stack: ... base_table key value */
+					lua_pushvalue(L, -2);    /* stack: ... base_table key value key */
+					lua_insert(L, -2);       /* stack: ... base_table key key value */
+					lua_rawset(L, -5);       /* stack: ... table[key]=value base_table key */
+				}
+			}
+			lua_pop(L, 3);                       /* stack: <empty> */
+		}
+
+		// create a new class table, set it's metatable
+		lua_newtable(L);                    // stack: table
+		luaL_getmetatable(L, name);          // stack: table mt
+		lua_setmetatable(L, -2);            // stack: table
+		//Use a key named ".isclass" to be a flag of class_table
+		lua_pushliteral(L, ".isclass");     // stack: table .isclass
+		lua_pushboolean(L, 1);              // stack: table .isclass 1
+		lua_rawset(L, -3);                  // stack: table
+	}
+
+	void State::reg_qt_function(const char *name, lua_CFunction f)
+	{
+		set_global(name, f);
+	}
+
 	void State::reg_c_function(const char *name, lua_CFunction f)
 	{
 		lua_pushcfunction(_lst, f);
@@ -1089,6 +1473,8 @@ int State::lua_meta_item_##n(lua_State *st)				\
 			QTLUA_LUA_CALL(_lst, luaopen_ffi, "ffi");
 #endif
 			qtluaopen_qt(this);
+			reg_qt_function("qt.inherit", lua_class_inherit);
+			reg_qt_function("qt.cast", lua_class_cast);
 
 		case QtLuaLib:
 			reg_c_function("print", lua_cmd_print);
@@ -1101,6 +1487,8 @@ int State::lua_meta_item_##n(lua_State *st)				\
 
 		case QtLib:
 			qtluaopen_qt(this);
+			reg_qt_function("qt.inherit", lua_class_inherit);
+			reg_qt_function("qt.cast", lua_class_cast);
 			return true;
 
 		default:

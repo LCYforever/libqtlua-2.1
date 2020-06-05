@@ -140,6 +140,7 @@ namespace QtLua {
 			will be created on the fly. The @ref __operator_sqb2__ function may be
 			used if no intermediate table access is needed. */
 		void set_global(const String &path, const Value &value);
+		void set_global(const String &path, int(*fcn)(lua_State *));
 
 		/** Get global variable. If path contains '.', intermediate tables
 			will be accessed. The @ref __operator_sqb1__ function may be used if no
@@ -278,8 +279,10 @@ namespace QtLua {
 			int &cursor_offset);
 
 		void set_global_r(const String &name, const Value &value, int tblidx);
+		void set_global_r(const String &name, int(*fcn)(lua_State *), int tblidx);
 		void get_global_r(const String &name, Value &value, int tblidx) const;
 
+		void reg_qt_function(const char *name, int(*fcn)(lua_State *));
 		void reg_c_function(const char *name, int(*fcn)(lua_State *));
 
 		static void lua_pgettable(lua_State *st, int index);
@@ -294,6 +297,16 @@ namespace QtLua {
 		static int lua_cmd_help(lua_State *st);
 		static int lua_cmd_plugin(lua_State *st);
 		static int lua_cmd_qtype(lua_State *st);
+		static void lua_reg_qtevent(lua_State *L);
+		static void storeatubox(lua_State* L, int lo);
+		static int class_newindex_event(lua_State* L);
+		static int class_table_get_index(lua_State* L);
+		static int class_index_event(lua_State* L);
+		static void lua_reg_classevent(lua_State *L);
+		static void lua_new_metatable(lua_State *L, const char *name, bool qt=false);
+		static void lua_class(lua_State *L, const char *name, const char *base);
+		static int lua_class_inherit(lua_State *L);
+		static int lua_class_cast(lua_State *L);
 
 		// lua meta methods functions
 		static int lua_meta_item_add(lua_State *st);
