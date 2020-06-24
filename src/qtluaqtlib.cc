@@ -102,7 +102,10 @@ namespace QtLua {
 			}
 			else
 			{
-				_mo_table.insert(me->module, QTLUA_REFNEW(QModuleObject, name, QModuleClassWrapper(me->_mo, me->_creator)));
+				QModuleClassWrapper cls(me->_mo, me->_creator);
+				cls._constructor = me->_constructor;
+
+				_mo_table.insert(me->module, QTLUA_REFNEW(QModuleObject, name, cls));
 			}
 		}
 

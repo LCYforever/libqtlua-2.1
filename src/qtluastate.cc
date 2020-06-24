@@ -290,6 +290,15 @@ namespace QtLua {
 			return 0;
 		}
 
+		luaL_getmetatable(L, name);						/*stack: mt*/
+		if (!lua_isnil(L, -1))
+		{
+			lua_pop(L, 1);								/*stack: */
+			luaL_error(L, "qt.inherit try to create an existed class [%s].", name);
+			return 0;
+		}
+		lua_pop(L, 1);									/*stack: */
+
 		if (!lua_getmetatable(L, 2)) {
 			lua_pushliteral(L, "Invalid argument #2 to inherit: class expected.");
 			lua_error(L);
@@ -384,7 +393,7 @@ int State::lua_meta_item_##n(lua_State *st)				\
   return lua_gettop(st) - x;						\
 }
 
-	LUA_META_2OP_FUNC(add, Value::OpAdd)
+		LUA_META_2OP_FUNC(add, Value::OpAdd)
 		LUA_META_2OP_FUNC(sub, Value::OpSub)
 		LUA_META_2OP_FUNC(mul, Value::OpMul)
 		LUA_META_2OP_FUNC(div, Value::OpDiv)

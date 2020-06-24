@@ -22,7 +22,7 @@
 #define QTLUAQMETAOBJECTWRAPPER_HH_
 
 #include <QMetaObject>
-
+#include <QtLua/Function>
 #include <QtLua/qtluastate.hh>
 #include <QtLua/qtluauserdata.hh>
 
@@ -33,6 +33,7 @@ namespace QtLua {
 		String module;
 		const QMetaObject *_mo;
 		qobject_creator *_creator;
+		Function::ptr _constructor;
 	};
 
 	/** @internal */
@@ -84,6 +85,9 @@ namespace QtLua {
 	protected:
 		Value meta_index(State *ls, const Value &key);
 		bool support(Value::Operation c) const;
+
+	public:
+		QtLua::Function::ptr _constructor;
 	};
 
 };

@@ -61,6 +61,7 @@ SET(BINDINGS_FILES
 SET(BINDING_INTERFACES
 	interfaces/qtluainterfaces_binding.hh interfaces/qtluainterfaces_binding.cc
 	interfaces/qtluaqwindow_binding.hh interfaces/qtluaqwindow_binding.cc
+	interfaces/qtluaqapplication_binding.hh interfaces/qtluaqapplication_binding.cc
 	)
 
 source_group("binding" FILES ${BINDINGS_FILES})
@@ -69,6 +70,7 @@ source_group("interfaces" FILES ${BINDING_INTERFACES})
 ADD_LIBRARY(qtlua SHARED
 			qtluaconfig.hh
 			qtluaqtlib.hh
+			qtluaqmetaobjecttable.hh
 			${INTERNAL_HEADERS}
 			${QTLUA_HEADERS}
 			${BINDINGS_FILES}

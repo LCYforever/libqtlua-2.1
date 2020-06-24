@@ -34,9 +34,12 @@ QTLUA_NS_BEGINE
 #define QTLUA_BINDING_CONSTRUCTOR(module) \
 	M->registerInterface("new", QTLUA_REFNEW(QtLua_Function_##module##_new));
 
+#define QTLUA_ALLOCATE_CONSTRUCTOR(module) \
+	QTLUA_REFNEW(QtLua_Function_##module##_new)
+
 #define QTLUA_INIT_MODULE(module) \
-	InterfaceMgr::ptr M = QTLUA_REFNEW(InterfaceMgr); \
-	QTLUA_BINDING_CONSTRUCTOR(module)
+	InterfaceMgr::ptr M = QTLUA_REFNEW(InterfaceMgr); //\
+	// QTLUA_BINDING_CONSTRUCTOR(module)
 
 #define QTLUA_END_MODULE(module) \
 	BindingMgr::Instance().registerModule(#module, M);
