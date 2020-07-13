@@ -148,6 +148,12 @@ namespace QtLua {
 		if (enum_value >= 0)
 			return Value(ls, enum_value);
 
+		// constructor
+		if (name == "new" && _constructor.valid())
+		{
+			return Value(ls, _constructor);
+		}
+
 		// search manual bindings interface method
 		String module(_mo->className());
 		Function::ptr fn = BindingMgr::Instance().findInterface(module, name);
