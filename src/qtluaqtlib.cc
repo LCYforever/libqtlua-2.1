@@ -98,7 +98,9 @@ namespace QtLua {
 			if (iter != _mo_table.end())
 			{
 				QModuleObject::ptr module = iter.value();
-				module->append(name, QModuleClassWrapper(me->_mo, me->_creator));
+				QModuleClassWrapper cls(me->_mo, me->_creator);
+				cls._constructor = me->_constructor;
+				module->append(name,cls);
 			}
 			else
 			{
@@ -116,7 +118,7 @@ namespace QtLua {
 	void QModuleTable::registerQtModules(State *ls)
 	{
 		// register all manual interface
-		registerManualInterfaces();
+		registerManualInterfaces(ls);
 
 #define REGISTER_QT_MODULE(module, wrapper) \
 	ls->set_global("qt."+ module, Value(ls, wrapper))
@@ -127,7 +129,10 @@ namespace QtLua {
 		{
 			REGISTER_QT_MODULE(iter.key(), iter.value());
 		}
+		
 	}
+
+
 
 	////////////////////////////////////////////////// qobjects
 

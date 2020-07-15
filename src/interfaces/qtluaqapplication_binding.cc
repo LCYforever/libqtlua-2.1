@@ -14,8 +14,8 @@ void registerQApplicationInterfaces()
 {
 	QTLUA_INIT_MODULE(QApplication);
 	QTLUA_BINDING_METHOD(QApplication, startDragDistance);
-
 	QTLUA_END_MODULE(QApplication);
+
 }
 
 QTLUA_NS_END

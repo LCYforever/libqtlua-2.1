@@ -46,6 +46,8 @@ namespace QtLua {
 				existing.insert(i.key());
 		}
 
+		int methodCount = mo->methodCount();
+
 		// Add method members
 		for (int i = 0; i < mo->methodCount(); i++)
 		{
@@ -70,6 +72,8 @@ namespace QtLua {
 			_member_cache.insert(name, QTLUA_REFNEW(Method, mo, index));
 		}
 
+		int enumCount = mo->enumeratorCount();
+
 		// Add enum members
 		for (int i = 0; i < mo->enumeratorCount(); i++)
 		{
@@ -87,6 +91,7 @@ namespace QtLua {
 			_member_cache.insert(name, QTLUA_REFNEW(Enum, mo, index));
 		}
 
+		int propertyCount = mo->propertyCount();
 		// Add property members
 		for (int i = 0; i < mo->propertyCount(); i++)
 		{

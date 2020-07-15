@@ -43,7 +43,6 @@ QTLUA_NS_BEGINE
 
 #define QTLUA_END_MODULE(module) \
 	BindingMgr::Instance().registerModule(#module, M);
-	
 
 QTLUA_NS_END
 #endif

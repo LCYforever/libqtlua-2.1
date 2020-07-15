@@ -40,6 +40,9 @@ extern "C" {
 
 #include <QtLua/State>
 #include <QtLua/Console>
+#include <qmetaobject.h>
+#include <QtLua/String>
+#include <QDebug>
 
 #ifndef LUA_RELEASE
 # define LUA_RELEASE LUA_VERSION
@@ -61,6 +64,31 @@ int main(int argc, char *argv[])
 		QStringList args = app.arguments();
 		QPointer<QtLua::Console> console(0);
 		QSettings settings("QtLua", "qtlua tool");
+		QDialog dialog;
+		const QMetaObject* mo = dialog.metaObject();
+		int nMetathodCount = mo->methodCount();
+
+		QByteArray normalizedSignature = QMetaObject::normalizedSignature("accepted()");
+		int methodIndex = dialog.metaObject()->indexOfMethod(normalizedSignature.constData());
+		qDebug() << methodIndex << endl;
+
+		for (int i = 0; i < mo->methodCount(); i++)
+		{
+			int index = mo->methodOffset() + i;
+			QMetaMethod mm = mo->method(index);
+
+			/*QtLua::String signature(mm.methodSignature());
+			if (signature.isNull())
+				continue;
+
+			QtLua::String name(signature.constData(), signature.indexOf('('));
+			qDebug() << name << endl;*/
+			qDebug() << mm.typeName() << endl;
+			qDebug() << mm.parameterCount() << endl;
+			qDebug() << mm.parameterTypes() << endl;
+			qDebug() << mm.parameterNames() << endl;
+			qDebug() << "----------" << endl;
+		}
 
 		bool interactive = argc == 1;
 		bool execute = interactive;

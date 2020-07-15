@@ -1,6 +1,15 @@
 #include <binding/qtluabindingmgr.hh>
 
 QTLUA_NS_BEGINE
+Value InterfaceMgr::meta_index(State* ls, const Value& key)
+{
+	String name(key.to_string());
+	QtLua::Function::ptr fn = findInterface(name);
+	if (fn.valid())
+		return Value(ls, fn);
+	return Value(ls);
+};
+
 
 QtLua::Function::ptr InterfaceMgr::findInterface(const String &name)
 {

@@ -406,7 +406,7 @@ int State::lua_meta_item_##n(lua_State *st)				\
 		LUA_META_2OP_FUNC(lt, Value::OpLt)
 		LUA_META_2OP_FUNC(le, Value::OpLe)
 
-		int State::lua_meta_item_index(lua_State *st)
+	int State::lua_meta_item_index(lua_State *st)
 	{
 		int		x = lua_gettop(st);
 		State		*this_ = get_this(st);

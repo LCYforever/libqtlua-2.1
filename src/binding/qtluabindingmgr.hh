@@ -7,14 +7,15 @@
 QTLUA_NS_BEGINE
 
 typedef QMap<String, QtLua::Function::ptr> interface_mgr_table;
-class QTLUA_API InterfaceMgr : public QtLua::Refobj<InterfaceMgr>
+//class QTLUA_API InterfaceMgr : public QtLua::Refobj<InterfaceMgr>
+class QTLUA_API InterfaceMgr : public UserData
 {
 public:
 	QTLUA_REFTYPE(InterfaceMgr);
 
 	InterfaceMgr() {}
 	~InterfaceMgr() {}
-
+	Value meta_index(State* ls, const Value& key);
 	QtLua::Function::ptr findInterface(const String &name);
 	void registerInterface(String name, QtLua::Function::ptr interface);
 
@@ -44,7 +45,7 @@ public:
 
 	static BindingMgr& Instance();
 
-protected:
+//protected:
 	module_mgr_table _modules;
 };
 
