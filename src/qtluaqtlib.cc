@@ -98,7 +98,9 @@ namespace QtLua {
 			if (iter != _mo_table.end())
 			{
 				QModuleObject::ptr module = iter.value();
-				module->append(name, QModuleClassWrapper(me->_mo, me->_creator));
+				QModuleClassWrapper cls(me->_mo, me->_creator);
+				cls._constructor = me->_constructor;
+				module->append(name, cls);
 			}
 			else
 			{
